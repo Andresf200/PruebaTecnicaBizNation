@@ -1,26 +1,60 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { LoginUserDto } from './dto/login.dto';
+import { User } from 'src/user/entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { JwtPayload } from './strategies/interface/jwt-payload.interface';
+import { CreateUserDto } from './dto/create-user.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    @InjectModel(User)
+    private readonly userModel: typeof User,
+
+    private readonly jwtService: JwtService,
+
+    private readonly commonService: CommonService,
+  ) {}
+
+  async login(loginDto: LoginUserDto) {
+    const { email, password } = loginDto;
+    const user = await this.userModel.findOne({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (!bcrypt.compareSync(password, user.password)) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const userData = user.get({ plain: true });
+    return {
+      ...userData,
+      token: this.getJwtToken({ id: user.id }),
+    };
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async register(createUserDto: CreateUserDto) {
+    try {
+      const { password, ...userData } = createUserDto;
+      const user = await this.userModel.create({
+        ...userData,
+        password: await bcrypt.hashSync(password, 10),
+      });
+      return user;
+    } catch (e) {
+      this.commonService.handleExceptions(e);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  private getJwtToken(payload: JwtPayload) {
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 }

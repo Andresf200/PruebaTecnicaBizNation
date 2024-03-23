@@ -1,26 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCommonDto } from './dto/create-common.dto';
-import { UpdateCommonDto } from './dto/update-common.dto';
-
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 @Injectable()
 export class CommonService {
-  create(createCommonDto: CreateCommonDto) {
-    return 'This action adds a new common';
-  }
-
-  findAll() {
-    return `This action returns all common`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} common`;
-  }
-
-  update(id: number, updateCommonDto: UpdateCommonDto) {
-    return `This action updates a #${id} common`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} common`;
+  handleExceptions(error: any) {
+    if (error.code === '23505')
+      throw new BadRequestException(
+        'Error de solicitud: algunos datos estan duplicados ' + error.detail,
+      );
+    //   this.logger.error(error);
+    console.log(error);
+    throw new InternalServerErrorException(
+      'Error inesperado, revisa los registros del servidor',
+    );
   }
 }
