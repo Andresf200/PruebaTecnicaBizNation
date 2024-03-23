@@ -9,10 +9,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from 'src/user/entities/user.entity';
 import { CommonModule } from 'src/common/common.module';
+import { MailModule } from 'src/mail/mail.module';
 @Module({
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
   imports: [
+    MailModule,
     CommonModule,
     UserModule,
     SequelizeModule.forFeature([User]),

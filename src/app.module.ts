@@ -14,6 +14,7 @@ import { Course } from './course/entities/course.entity';
 import { Lesson } from './lesson/entities/lesson.entity';
 import { ProgressCourse } from './progress-course/entities/progress-course.entity';
 import { ProgressLesson } from './progress-lesson/entities/progress-lesson.entity';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ProgressLesson } from './progress-lesson/entities/progress-lesson.entit
       models: [User, Course, Lesson, ProgressCourse, ProgressLesson],
       autoLoadModels: true,
     }),
+    MailModule,
   ],
   controllers: [],
   providers: [],

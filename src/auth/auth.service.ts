@@ -7,6 +7,7 @@ import { JwtPayload } from './strategies/interface/jwt-payload.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { CommonService } from 'src/common/common.service';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
 
     private readonly commonService: CommonService,
+
+    private readonly mailService: MailService,
   ) {}
 
   async login(loginDto: LoginUserDto) {
@@ -47,6 +50,13 @@ export class AuthService {
         ...userData,
         password: await bcrypt.hashSync(password, 10),
       });
+
+      await this.mailService.sendEmail({
+        to: user.email,
+        subject: 'Registro del usuario',
+        user: user,
+      });
+
       return user;
     } catch (e) {
       this.commonService.handleExceptions(e);
