@@ -1,29 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ProgressLessonService } from './progress-lesson.service';
 import { CreateProgressLessonDto } from './dto/create-progress-lesson.dto';
 import { UpdateProgressLessonDto } from './dto/update-progress-lesson.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from 'src/user/entities/user.entity';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
 
 @Controller('progress-lesson')
 export class ProgressLessonController {
   constructor(private readonly progressLessonService: ProgressLessonService) {}
 
   @Post()
-  create(@Body() createProgressLessonDto: CreateProgressLessonDto) {
-    return this.progressLessonService.create(createProgressLessonDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.progressLessonService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.progressLessonService.findOne(+id);
+  @UseGuards(AuthGuard())
+  create(
+    @Body() createProgressLessonDto: CreateProgressLessonDto,
+    @GetUser() user: User,
+  ) {
+    return this.progressLessonService.create(createProgressLessonDto, user);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProgressLessonDto: UpdateProgressLessonDto) {
+  @UseGuards(AuthGuard())
+  update(
+    @Param('id') id: string,
+    @Body() updateProgressLessonDto: UpdateProgressLessonDto,
+  ) {
     return this.progressLessonService.update(+id, updateProgressLessonDto);
   }
 

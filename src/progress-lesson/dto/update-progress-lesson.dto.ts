@@ -1,4 +1,12 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateProgressLessonDto } from './create-progress-lesson.dto';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 
-export class UpdateProgressLessonDto extends PartialType(CreateProgressLessonDto) {}
+export enum State {
+  PENDING = 'pending',
+  PROGRESS = 'progress',
+  COMPLETED = 'completed',
+}
+export class UpdateProgressLessonDto {
+  @IsNotEmpty()
+  @IsEnum(State)
+  state: State;
+}

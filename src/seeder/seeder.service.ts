@@ -1,26 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSeederDto } from './dto/create-seeder.dto';
-import { UpdateSeederDto } from './dto/update-seeder.dto';
+import { CourseService } from 'src/course/course.service';
 
 @Injectable()
 export class SeederService {
-  create(createSeederDto: CreateSeederDto) {
-    return 'This action adds a new seeder';
+  constructor(private courseservice: CourseService) {}
+
+  async runSeed() {
+    await this.deleteTables();
   }
 
-  findAll() {
-    return `This action returns all seeder`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} seeder`;
-  }
-
-  update(id: number, updateSeederDto: UpdateSeederDto) {
-    return `This action updates a #${id} seeder`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} seeder`;
+  private async deleteTables() {
+    // await this.courseservice.deleteAllProducts();
+    // const queryBuilder = this.userRepository.createQueryBuilder();
+    // await queryBuilder.delete().where({}).execute();
   }
 }
