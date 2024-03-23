@@ -57,4 +57,8 @@ export class AuthService {
     const token = this.jwtService.sign(payload);
     return token;
   }
+
+  async deleteAllUsers() {
+    await this.userModel.destroy({ where: {}, force: true });
+  }
 }

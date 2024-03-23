@@ -9,6 +9,7 @@ import { ProgressLesson } from 'src/progress-lesson/entities/progress-lesson.ent
 import { ProgressCourse } from 'src/progress-course/entities/progress-course.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { User } from 'src/user/entities/user.entity';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   controllers: [CourseController],
@@ -20,6 +21,7 @@ import { User } from 'src/user/entities/user.entity';
     SequelizeModule.forFeature([ProgressLesson]),
     SequelizeModule.forFeature([ProgressCourse]),
     SequelizeModule.forFeature([User]),
+    CommonModule,
   ],
   providers: [CourseService],
   exports: [CourseService],

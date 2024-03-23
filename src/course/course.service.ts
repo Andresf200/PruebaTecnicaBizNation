@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -16,6 +15,7 @@ import { ProgressLesson } from 'src/progress-lesson/entities/progress-lesson.ent
 import { User } from 'src/user/entities/user.entity';
 import { Op } from 'sequelize';
 import { ProgressCourse } from 'src/progress-course/entities/progress-course.entity';
+import { CommonService } from '../common/common.service';
 
 @Injectable()
 export class CourseService {
@@ -36,6 +36,8 @@ export class CourseService {
     private readonly userModel: typeof User,
 
     private readonly lessonService: LessonService,
+
+    private readonly commonService: CommonService,
   ) {}
 
   async create(createCourseDto: CreateCourseDto) {
@@ -57,7 +59,7 @@ export class CourseService {
       await course.reload({ include: ['lessons'] });
       return course;
     } catch (e) {
-      this.handleExceptions(e);
+      this.commonService.handleExceptions(e);
     }
   }
 
@@ -221,7 +223,7 @@ export class CourseService {
       await course.reload({ include: ['lessons'] });
       return course;
     } catch (e) {
-      this.handleExceptions(e);
+      this.commonService.handleExceptions(e);
     }
   }
 
@@ -263,15 +265,8 @@ export class CourseService {
     await course.destroy();
   }
 
-  private handleExceptions(error: any) {
-    if (error.code === '23505')
-      throw new BadRequestException(
-        'Error de solicitud: algunos datos estan duplicados ' + error.detail,
-      );
-    //   this.logger.error(error);
-    console.log(error);
-    throw new InternalServerErrorException(
-      'Error inesperado, revisa los registros del servidor',
-    );
+  async deleteAllCourseLesons() {
+    await this.lessonModel.destroy({ where: {}, force: true });
+    await this.courseModel.destroy({ where: {}, force: true });
   }
 }

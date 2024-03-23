@@ -14,5 +14,6 @@ import { AuthModule } from 'src/auth/auth.module';
   ],
   controllers: [ProgressLessonController],
   providers: [ProgressLessonService],
+  exports: [ProgressLessonService],
 })
 export class ProgressLessonModule {}

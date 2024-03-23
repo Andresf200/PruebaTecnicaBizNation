@@ -59,4 +59,8 @@ export class ProgressLessonService {
     }
     return progressCourse.destroy();
   }
+
+  async deleteAllProgressLessons() {
+    await this.progressLessonModel.destroy({ where: {}, force: true });
+  }
 }
