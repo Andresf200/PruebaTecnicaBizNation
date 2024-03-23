@@ -13,6 +13,8 @@ import { UpdateProgressCourseDto } from './dto/update-progress-course.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/entities/user.entity';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { RoleProtected } from 'src/auth/decorators/role-protected.decorator';
+import { ValidRoles } from 'src/auth/interfaces/valid-roles';
 //Todo solo para estudiante
 @Controller('progress-course')
 export class ProgressCourseController {
@@ -20,6 +22,7 @@ export class ProgressCourseController {
 
   @Post()
   @UseGuards(AuthGuard())
+  @RoleProtected(ValidRoles.student)
   create(
     @Body() createProgressCourseDto: CreateProgressCourseDto,
     @GetUser() user: User,
@@ -29,6 +32,7 @@ export class ProgressCourseController {
 
   @Patch(':id')
   @UseGuards(AuthGuard())
+  @RoleProtected(ValidRoles.student)
   update(
     @Param('id') id: string,
     @Body() updateProgressCourseDto: UpdateProgressCourseDto,
@@ -38,6 +42,7 @@ export class ProgressCourseController {
 
   @Delete(':id')
   @UseGuards(AuthGuard())
+  @RoleProtected(ValidRoles.student)
   remove(@Param('id') id: string) {
     return this.progressCourseService.remove(+id);
   }

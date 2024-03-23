@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
-import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
@@ -25,7 +25,7 @@ import { ConfigModule } from '@nestjs/config';
       },
       template: {
         dir: join(__dirname, 'templates'),
-        adapter: new PugAdapter(),
+        adapter: new HandlebarsAdapter(),
         options: {
           strict: true,
         },
